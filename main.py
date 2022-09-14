@@ -5,7 +5,7 @@ import json
 
 # Открытие базы данных и создание таблиц из задания 2
 db_name = 'bookstock_db'    #Здесь надо подставить имя вашей БД
-password = 'rfpfr56'        #Здесь вставляется пароль к postgres
+password = '*******'        #Здесь вставляется пароль к postgres
 DSN = f'postgresql://postgres:{password}@localhost:5432/{db_name}'
 engine = sqlalchemy.create_engine(DSN)
 create_tables(engine)
