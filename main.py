@@ -1,11 +1,11 @@
 import sqlalchemy
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from models import create_tables, Publisher, Shop, Book, Stock, Sale
 import json
 
 # Открытие базы данных и создание таблиц из задания 2
 db_name = 'bookstock_db'    #Здесь надо подставить имя вашей БД
-password = '*******'        #Здесь вставляется пароль к postgres
+password = '******'        #Здесь вставляется пароль к postgres
 DSN = f'postgresql://postgres:{password}@localhost:5432/{db_name}'
 engine = sqlalchemy.create_engine(DSN)
 create_tables(engine)
@@ -30,4 +30,16 @@ if name_id_publ.isdigit():
 else:
     for q in session.query(Publisher).filter(Publisher.name == name_id_publ):
         print(q)
+
+# Доп. задание: создание выборки магазинов, где продают книги определенного издательства
+# Без подзапроса:
+name_publ = input('Введите имя издательства: ')
+for q in session.query(Shop).join(Stock.shop).join(Stock.book).join(Book.publisher).filter(Publisher.name == name_publ).all():
+    print(q)
+
+# Через подзапрос:
+name_publ = input('Введите имя издательства: ')
+subq = session.query(Stock).join(Stock.book).join(Book.publisher).filter(Publisher.name == name_publ).subquery()
+for q in session.query(Shop).join(subq, Shop.id == subq.c.id_shop).all():
+    print(q)
 session.close()
